@@ -43,7 +43,7 @@ export default function Profile() {
                                     alt="Avatar"
                                     className="w-24 h-24 rounded-full object-cover border-2 border-blue-500"
                                 />
-                                <h2 className="text-2xl font-semibold mt-4">{user.firstname} {user.lastname}</h2>
+                                <h2 className="text-2xl font-semibold mt-4">{user.name} </h2>
                                 <p className="text-gray-400">{user.email}</p>
                                 <p className="text-gray-400">{user.phone}</p>
                                 {/* Edit Profile Button */}
@@ -130,13 +130,9 @@ export default function Profile() {
                 <div className="fixed inset-0 bg-black bg-opacity-50 z-30 flex justify-center items-center">
                     <div className="bg-white text-black w-1/2 p-8 rounded-lg">
                         <h2 className="text-2xl font-semibold mb-4">Edit Profile</h2>
-                        <div>
-                            <label className="block text-sm text-gray-600">First Name</label>
-                            <input type="text" defaultValue={user.firstname} className="w-full p-2 mt-2 border border-gray-300 rounded" />
-                        </div>
                         <div className="mt-4">
-                            <label className="block text-sm text-gray-600">Last Name</label>
-                            <input type="text" defaultValue={user.lastname} className="w-full p-2 mt-2 border border-gray-300 rounded" />
+                            <label className="block text-sm text-gray-600">Full Name</label>
+                            <input type="text" defaultValue={user.name} className="w-full p-2 mt-2 border border-gray-300 rounded" />
                         </div>
                         <div className="mt-4">
                             <label className="block text-sm text-gray-600">Email</label>

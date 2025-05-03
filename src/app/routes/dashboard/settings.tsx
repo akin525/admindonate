@@ -40,15 +40,15 @@ export default function SiteSettings() {
     const handleSave = async () => {
         setSaving(true);
         try {
-            const res = await fetch(`${baseUrl}settings`, {
-                method: "PUT", // or PATCH depending on your API
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify(settings),
-            });
-            const data = await res.json();
+            // const res = await fetch(`${baseUrl}settings`, {
+            //     method: "PUT", // or PATCH depending on your API
+            //     headers: {
+            //         "Content-Type": "application/json",
+            //         Authorization: `Bearer ${token}`,
+            //     },
+            //     body: JSON.stringify(settings),
+            // });
+            // const data = await res.json();
             alert("Settings updated successfully!");
         } catch (err) {
             console.error("Failed to update settings:", err);

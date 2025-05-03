@@ -2,11 +2,11 @@ import { useState } from "react";
 import Sidebar from "../../../components/Sidebar";
 import DashboardHeader from "../../../components/DashboardHeader";
 import { ArrowDownRight, ArrowUpRight, ClipboardList, DollarSign } from "lucide-react";
-import { useUser } from "@/context/UserContext.tsx";
+// import { useUser } from "@/context/UserContext.tsx";
 
 export default function Wallet() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const { user } = useUser();
+    // const { user } = useUser();
 
     return (
         <div className="min-h-screen text-white flex bg-[#050B1E]">
@@ -34,9 +34,9 @@ export default function Wallet() {
                                     <div className="flex items-center justify-between">
                                         <div>
                                             <p className="text-gray-400 text-sm">USDT Balance</p>
-                                            <h2 className="text-3xl font-semibold">
-                                                {user?.balance?.toLocaleString() ?? "0.00"} USDT
-                                            </h2>
+                                            {/*<h2 className="text-3xl font-semibold">*/}
+                                            {/*    {user?.balance?.toLocaleString() ?? "0.00"} USDT*/}
+                                            {/*</h2>*/}
                                         </div>
                                         <DollarSign className="w-10 h-10 text-primary" />
                                     </div>
@@ -47,9 +47,9 @@ export default function Wallet() {
                                     <div className="flex items-center justify-between">
                                         <div>
                                             <p className="text-gray-400 text-sm">Total Earnings</p>
-                                            <h2 className="text-3xl font-semibold">
-                                                {user?.earning?.toLocaleString() ?? "0.00"} USDT
-                                            </h2>
+                                            {/*<h2 className="text-3xl font-semibold">*/}
+                                            {/*    {user?.earning?.toLocaleString() ?? "0.00"} USDT*/}
+                                            {/*</h2>*/}
                                         </div>
                                         <ArrowUpRight className="w-10 h-10 text-green-400" />
                                     </div>
@@ -76,22 +76,22 @@ export default function Wallet() {
                             <div className="bg-[#070D20] p-6 rounded-xl border border-gray-800 shadow">
                                 <h3 className="text-xl font-semibold text-white mb-4">Recent Transactions</h3>
                                 <ul className="divide-y divide-gray-800 text-sm text-gray-300">
-                                    {user?.transactions && user.transactions.length > 0 ? (
-                                        user.transactions.slice(0, 5).map((txn, index) => (
-                                            <li key={index} className="py-3 flex justify-between">
-                                                <span>{txn.description}</span>
-                                                <span className={
-                                                    txn.status === "Completed" ? "text-green-400" :
-                                                        txn.status === "Pending" ? "text-yellow-300" :
-                                                            "text-gray-400"
-                                                }>
-                                                    {txn.status}
-                                                </span>
-                                            </li>
-                                        ))
-                                    ) : (
-                                        <li className="py-3 text-gray-500 text-center">No recent transactions</li>
-                                    )}
+                                    {/*{user?.transactions && user.transactions.length > 0 ? (*/}
+                                    {/*    user.transactions.slice(0, 5).map((txn, index) => (*/}
+                                    {/*        <li key={index} className="py-3 flex justify-between">*/}
+                                    {/*            <span>{txn.description}</span>*/}
+                                    {/*            <span className={*/}
+                                    {/*                txn.status === "Completed" ? "text-green-400" :*/}
+                                    {/*                    txn.status === "Pending" ? "text-yellow-300" :*/}
+                                    {/*                        "text-gray-400"*/}
+                                    {/*            }>*/}
+                                    {/*                {txn.status}*/}
+                                    {/*            </span>*/}
+                                    {/*        </li>*/}
+                                    {/*    ))*/}
+                                    {/*) : (*/}
+                                    {/*    <li className="py-3 text-gray-500 text-center">No recent transactions</li>*/}
+                                    {/*)}*/}
                                 </ul>
                             </div>
 

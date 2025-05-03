@@ -1,6 +1,5 @@
 import { RouterProvider } from "react-router";
 import { createBrowserRouter } from "react-router";
-import Home from "./routes/site/home";
 import { NotFound } from "./not-found";
 import RegisterPage from "./routes/auth/register";
 import LoginPage from "./routes/auth/login";

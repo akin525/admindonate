@@ -5,13 +5,23 @@ import { getAuthToken } from "@/utils/auth";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 const token = getAuthToken();
+interface Plan {
+    id: number;
+    name: string;
+    minimum: string;
+    maximum: string;
+    interest: string;
+    interest_type: string;
+}
 
 export default function PlansPage() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [plans, setPlans] = useState([]);
     const [loading, setLoading] = useState(true);
     const [modalOpen, setModalOpen] = useState(false);
-    const [editingPlan, setEditingPlan] = useState(null);
+    const [plans, setPlans] = useState<Plan[]>([]);
+    const [editingPlan, setEditingPlan] = useState<Plan | null>(null);
+
+    const fields: (keyof typeof form)[] = ["name", "minimum", "maximum", "interest"];
 
     const [form, setForm] = useState({
         name: "",
@@ -40,7 +50,7 @@ export default function PlansPage() {
         }
     };
 
-    const openModal = (plan = null) => {
+    const openModal = (plan: Plan | null = null) => {
         setEditingPlan(plan);
         setForm(plan || {
             name: "",
@@ -52,19 +62,20 @@ export default function PlansPage() {
         setModalOpen(true);
     };
 
+
     const closeModal = () => {
         setModalOpen(false);
         setEditingPlan(null);
     };
 
-    const handleChange = (e) => {
+    const handleChange = (e: any) => {
         const { name, value } = e.target;
         setForm(prev => ({ ...prev, [name]: value }));
     };
 
     const handleSubmit = async () => {
         const method = editingPlan ? "PUT" : "POST";
-        const endpoint = editingPlan ? `${baseUrl}plans/${editingPlan.id}` : `${baseUrl}plans`;
+        const endpoint = editingPlan ? `${baseUrl}plans/${editingPlan?.id}` : `${baseUrl}plans`;
 
         try {
             const res = await fetch(endpoint, {
@@ -137,7 +148,7 @@ export default function PlansPage() {
                             {editingPlan ? "Edit Plan" : "Add New Plan"}
                         </h2>
 
-                        {["name", "minimum", "maximum", "interest"].map(field => (
+                        {fields.map(field => (
                             <div key={field}>
                                 <label className="block text-sm mb-1 capitalize">{field}</label>
                                 <input

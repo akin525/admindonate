@@ -1,8 +1,8 @@
-import { useState } from "react";
+import {JSX, useState} from "react";
 import Sidebar from "../../../components/Sidebar";
 import DashboardHeader from "../../../components/DashboardHeader";
 import { User, BarChart, HandCoins, HandHeart, Activity } from "lucide-react";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
 import { useUser } from "@/context/UserContext"; // Removed `.tsx` extension
 
 export default function AdminDashboard() {
