@@ -23,6 +23,7 @@ const PeerStatusPage = () => {
     });
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [selectedPeer, setSelectedPeer] = useState<any | null>(null);
 
     const fetchPeers = async (status: string, url?: string) => {
         setLoading(true);
@@ -124,7 +125,8 @@ const PeerStatusPage = () => {
                                     peers.map((peer: any) => (
                                         <tr
                                             key={peer.id}
-                                            className="border-t border-gray-700 hover:bg-[#1e293b]"
+                                            className="border-t border-gray-700 hover:bg-[#1e293b] cursor-pointer"
+                                            onClick={() => setSelectedPeer(peer)}
                                         >
                                             <td className="px-6 py-4">{peer.reference}</td>
                                             <td className="px-6 py-4">{peer.bid_user?.username || "N/A"}</td>
@@ -148,7 +150,6 @@ const PeerStatusPage = () => {
                         </div>
                     )}
 
-                    {/* Pagination */}
                     <div className="mt-6 flex justify-between items-center text-sm text-gray-400">
                         <button
                             disabled={!pagination.prev_page_url}
@@ -168,6 +169,55 @@ const PeerStatusPage = () => {
                             Next
                         </button>
                     </div>
+
+                    {selectedPeer && (
+                        <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center">
+                            <div className="bg-[#1f2937] p-6 rounded-lg shadow-xl w-full max-w-3xl relative overflow-y-auto max-h-[90vh]">
+                                <button
+                                    className="absolute top-2 right-2 text-gray-400 hover:text-white text-xl"
+                                    onClick={() => setSelectedPeer(null)}
+                                >
+                                    ✕
+                                </button>
+                                <h2 className="text-2xl font-bold mb-4">Peer Transaction Details</h2>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                    <div>
+                                        <p><strong>Reference:</strong> {selectedPeer.reference}</p>
+                                        <p><strong>Status:</strong> {selectedPeer.status.replace(/_/g, ' ')}</p>
+                                        <p><strong>Payment Status:</strong> {selectedPeer.payment_status}</p>
+                                        <p><strong>Pair Amount:</strong> {selectedPeer.pair_amount} USDT</p>
+                                        <p><strong>Due At:</strong> {selectedPeer.due_at}</p>
+                                        <p><strong>Paid At:</strong> {selectedPeer.paid_at || "N/A"}</p>
+                                        <p><strong>Confirmed At:</strong> {selectedPeer.confirmed_at || "N/A"}</p>
+                                        <p><strong>Hash Tag:</strong> <a href={selectedPeer.hash_tag} className="text-blue-400 underline" target="_blank">{selectedPeer.hash_tag}</a></p>
+                                    </div>
+
+                                    <div>
+                                        <h3 className="text-lg font-semibold mt-4 mb-2">Ask Details</h3>
+                                        <p><strong>User:</strong> {selectedPeer.ask_user?.username} ({selectedPeer.ask_user?.email})</p>
+                                        <p><strong>Amount:</strong> {selectedPeer.ask?.amount} USDT</p>
+                                        <p><strong>Paired:</strong> {selectedPeer.ask?.paired_amount} USDT</p>
+                                        <p><strong>BEP Address:</strong> {selectedPeer.ask?.bep_address}</p>
+                                        <p><strong>Balance Source:</strong> {selectedPeer.ask?.bal_source}</p>
+                                        <p><strong>Balance Before:</strong> {selectedPeer.ask?.bal_before}</p>
+                                        <p><strong>Balance After:</strong> {selectedPeer.ask?.bal_after}</p>
+                                        <p><strong>Trx:</strong> {selectedPeer.ask?.trx}</p>
+                                    </div>
+
+                                    <div>
+                                        <h3 className="text-lg font-semibold mt-4 mb-2">Bid Details</h3>
+                                        <p><strong>User:</strong> {selectedPeer.bid_user?.username} ({selectedPeer.bid_user?.email})</p>
+                                        <p><strong>Amount:</strong> {selectedPeer.bid?.amount} USDT</p>
+                                        <p><strong>Paired:</strong> {selectedPeer.bid?.paired_amount} USDT</p>
+                                        <p><strong>Plan ID:</strong> {selectedPeer.bid?.plan_id}</p>
+                                        <p><strong>Invest ID:</strong> {selectedPeer.bid?.invest_id}</p>
+                                        <p><strong>Trx:</strong> {selectedPeer.bid?.trx}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
