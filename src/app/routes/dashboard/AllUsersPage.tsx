@@ -13,11 +13,13 @@ interface User {
 }
 
 interface ApiResponse {
-    current_page: number;
-    data: User[];
-    next_page_url: string | null;
-    prev_page_url: string | null;
-    last_page: number;
+    data: {
+        data: User[];
+        current_page: number;
+        next_page_url: string | null;
+        prev_page_url: string | null;
+        last_page: number;
+    };
 }
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
@@ -26,14 +28,20 @@ const token = getAuthToken();
 export default function AllUsersPage() {
     const [users, setUsers] = useState<User[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const [pagination, setPagination] = useState<Omit<ApiResponse, "data"> | null>(null);
+    const [pagination, setPagination] = useState<{
+        current_page: number;
+        next_page_url: string | null;
+        prev_page_url: string | null;
+        last_page: number;
+    } | null>(null);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
+    const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
     const fetchUsers = async (page = 1) => {
         setLoading(true);
+        setError(null);  // Reset the error before making a new request
         try {
             const res = await fetch(`${baseUrl}users?page=${page}`, {
                 headers: {
@@ -45,7 +53,7 @@ export default function AllUsersPage() {
             if (!res.ok) throw new Error("Failed to fetch users");
             const result: ApiResponse = await res.json();
 
-            setUsers(result.data.data);
+            setUsers(result.data.data);  // Corrected this part to match the API response
             setPagination({
                 current_page: result.data.current_page,
                 next_page_url: result.data.next_page_url,
@@ -64,11 +72,15 @@ export default function AllUsersPage() {
     }, [currentPage]);
 
     const handleNext = () => {
-        if (pagination?.next_page_url) setCurrentPage((prev) => prev + 1);
+        if (pagination?.next_page_url) {
+            setCurrentPage((prev) => prev + 1);
+        }
     };
 
     const handlePrevious = () => {
-        if (pagination?.prev_page_url && currentPage > 1) setCurrentPage((prev) => prev - 1);
+        if (pagination?.prev_page_url && currentPage > 1) {
+            setCurrentPage((prev) => prev - 1);
+        }
     };
 
     return (
@@ -90,6 +102,7 @@ export default function AllUsersPage() {
                     {loading ? (
                         <div className="text-center mt-10">
                             <p className="text-gray-300">Loading users...</p>
+                            <div className="mt-4 animate-spin w-8 h-8 border-4 border-t-4 border-blue-500 rounded-full mx-auto"></div>
                         </div>
                     ) : error ? (
                         <div className="text-red-500 text-center">{error}</div>
@@ -99,7 +112,7 @@ export default function AllUsersPage() {
                                 {users.map((user) => (
                                     <div
                                         key={user.id}
-                                        className="bg-gray-800 hover:bg-gray-700 transition p-4 rounded-xl shadow cursor-pointer"
+                                        className="bg-gray-800 hover:bg-gray-700 transition p-4 rounded-xl shadow-lg cursor-pointer"
                                         onClick={() => navigate(`/user-details/${user.id}`)}
                                     >
                                         <p className="text-lg font-semibold">
@@ -123,8 +136,8 @@ export default function AllUsersPage() {
                                     Previous
                                 </button>
                                 <span className="text-sm">
-                  Page {pagination?.current_page} of {pagination?.last_page}
-                </span>
+                                    Page {pagination?.current_page} of {pagination?.last_page}
+                                </span>
                                 <button
                                     onClick={handleNext}
                                     disabled={!pagination?.next_page_url}
