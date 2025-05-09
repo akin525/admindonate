@@ -22,6 +22,10 @@ import BidStatusSearch from "@/app/routes/dashboard/BidStatusSearch.tsx";
 import AskStatusSearch from "@/app/routes/dashboard/AskStatusSearch.tsx";
 import PlansPage from "@/app/routes/dashboard/Plan.tsx";
 import PeerStatusPage from "@/app/routes/dashboard/PeerStatusPage.tsx";
+import InvestmentsPage from "@/app/routes/dashboard/InvestmentsPage.tsx";
+import InvestmentDetails from "@/app/routes/dashboard/InvestmentDetails.tsx";
+import AllUsersPage from "@/app/routes/dashboard/AllUsersPage.tsx";
+import UserDetailsPage from "@/app/routes/dashboard/UserDetailsPage.tsx";
 
 export const router = createBrowserRouter([
   {
@@ -89,6 +93,22 @@ export const router = createBrowserRouter([
         </ProtectedRoute>
     ),
   },
+    {
+    path: "/users",
+    Component: () => (
+        <ProtectedRoute>
+          <AllUsersPage />
+        </ProtectedRoute>
+    ),
+  },
+    {
+    path: "/user-details/:id",
+    Component: () => (
+        <ProtectedRoute>
+          <UserDetailsPage />
+        </ProtectedRoute>
+    ),
+  },
   {
     path: "/bid",
     Component: () => (
@@ -153,6 +173,24 @@ export const router = createBrowserRouter([
         </ProtectedRoute>
     ),
   },
+    {
+
+    path: "/investment",
+    Component: () => (
+        <ProtectedRoute>
+          <InvestmentsPage/>
+        </ProtectedRoute>
+    ),
+  },
+    {
+
+        path: "/investments/:id",
+        Component: () => (
+            <ProtectedRoute>
+                <InvestmentDetails/>
+            </ProtectedRoute>
+        ),
+    },
   {
 
     path: "/settings",

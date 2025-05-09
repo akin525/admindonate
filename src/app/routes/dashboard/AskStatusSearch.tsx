@@ -38,7 +38,7 @@ export default function AskStatusSearch() {
     };
 
     const renderCard = (item: any) => (
-        <Link to={`/bids/${item.id}`} key={item.id}>
+        <Link to={`/asks/${item.id}`} key={item.id}>
             <div className="bg-gradient-to-br from-[#1a202c] to-[#111827] border border-[#2D3748] p-6 rounded-2xl hover:border-blue-500 hover:shadow-xl transition-all">
                 <div className="flex justify-between items-center text-sm text-gray-400 mb-2">
                     <span>Ask ID</span>
