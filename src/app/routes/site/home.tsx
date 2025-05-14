@@ -140,7 +140,7 @@ const HeroSection = () => {
             return (
               <p key={index} className="mx-4 text-base sm:text-xl font-bold">
                 <span className="mx-4">$TL</span>
-                <span className="mx-4">TradeLink</span>
+                <span className="mx-4">Smartp2pcircle</span>
               </p>
             );
           })}
@@ -162,7 +162,7 @@ const WhatIsSection = () => {
               </span>
             </div>
             <span className="text-primary text-sm sm:text-base uppercase font-medium">
-              WHAT IS TradeLink
+              WHAT IS Smartp2pcircle
             </span>
           </div>
 
@@ -171,7 +171,7 @@ const WhatIsSection = () => {
           </h1>
 
           <p className="text-muted-foreground text-sm lg:text-base mb-8 max-w-lg">
-            TradeLink (TL) is a peer-to-peer digital asset trading and exchange
+            Smartp2pcircle (TL) is a peer-to-peer digital asset trading and exchange
             platform that seizes all opportunities in the crypto world by acting
             as an intermediary between a seller of a digital asset (coin or
             token) and his corresponding buyer.
@@ -322,7 +322,7 @@ function ServicesSection() {
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Our Services</h2>
           <p className="text-muted-foreground text-sm sm:text-base max-w-2xl mx-auto">
-            TradeLink Trading offers a comprehensive suite of services to meet
+            Smartp2pcircle Trading offers a comprehensive suite of services to meet
             all your cryptocurrency trading needs.
           </p>
         </div>
@@ -381,7 +381,7 @@ function FeaturesSection() {
           </div>
 
           <h2 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">
-            Why Choose TradeLink Trading Platform
+            Why Choose Smartp2pcircle Trading Platform
           </h2>
 
           <p className="text-gray-400 text-sm sm:text-base  mb-8">
@@ -414,9 +414,9 @@ function FeaturesSection() {
 function FAQSection() {
   const faqs = [
     {
-      question: "What is TradeLink Trading (TL)?",
+      question: "What is Smartp2pcircle Trading (TL)?",
       answer:
-        "TradeLink Trading (TL) is a peer-to-peer digital asset trading and exchange platform that acts as an intermediary between sellers and buyers of digital assets (coins or tokens). Our platform enables secure, transparent, and efficient trading without traditional intermediaries.",
+        "Smartp2pcircle Trading (TL) is a peer-to-peer digital asset trading and exchange platform that acts as an intermediary between sellers and buyers of digital assets (coins or tokens). Our platform enables secure, transparent, and efficient trading without traditional intermediaries.",
     },
     {
       question: "How does P2P trading work?",
@@ -426,27 +426,27 @@ function FAQSection() {
     {
       question: "What cryptocurrencies can I trade on TL?",
       answer:
-        "TradeLink Trading supports a wide range of cryptocurrencies including Bitcoin (BTC), Ethereum (ETH), Tether (USDT), Binance Coin (BNB), and many other popular altcoins. We regularly add support for new cryptocurrencies based on market demand and community feedback.",
+        "Smartp2pcircle Trading supports a wide range of cryptocurrencies including Bitcoin (BTC), Ethereum (ETH), Tether (USDT), Binance Coin (BNB), and many other popular altcoins. We regularly add support for new cryptocurrencies based on market demand and community feedback.",
     },
     {
-      question: "Is TradeLink Trading secure?",
+      question: "Is Smartp2pcircle Trading secure?",
       answer:
         "Yes, security is our top priority. We implement industry-standard security measures including two-factor authentication (2FA), advanced encryption for all data, cold storage for the majority of assets, and regular security audits. Additionally, our escrow system protects both buyers and sellers during transactions.",
     },
     {
       question: "What are the fees for trading on TL?",
       answer:
-        "TradeLink Trading charges a small fee for each successful transaction, typically ranging from 0.1% to 0.5% depending on the trading volume and user tier. We do not charge any deposit fees, and withdrawal fees vary depending on the cryptocurrency network. You can view our complete fee schedule in your account dashboard.",
+        "Smartp2pcircle Trading charges a small fee for each successful transaction, typically ranging from 0.1% to 0.5% depending on the trading volume and user tier. We do not charge any deposit fees, and withdrawal fees vary depending on the cryptocurrency network. You can view our complete fee schedule in your account dashboard.",
     },
     {
-      question: "How do I get started with TradeLink Trading?",
+      question: "How do I get started with Smartp2pcircle Trading?",
       answer:
         "Getting started is simple: 1) Create an account by clicking the 'Sign Up' button, 2) Complete the verification process to secure your account, 3) Deposit funds or cryptocurrencies into your wallet, and 4) Start trading! Our intuitive interface makes it easy for both beginners and experienced traders.",
     },
     {
       question: "What payment methods are supported?",
       answer:
-        "TradeLink Trading supports various payment methods including bank transfers, credit/debit cards, PayPal, and other popular online payment services. Available payment methods may vary by region and are determined by the sellers' preferences when listing their assets.",
+        "Smartp2pcircle Trading supports various payment methods including bank transfers, credit/debit cards, PayPal, and other popular online payment services. Available payment methods may vary by region and are determined by the sellers' preferences when listing their assets.",
     },
     {
       question: "How long do transactions take to complete?",
@@ -463,7 +463,7 @@ function FAQSection() {
             Frequently Asked Questions
           </h2>
           <p className="text-muted-foreground text-sm sm:text-base max-w-sm mx-auto">
-            Find answers to the most common questions about TradeLink Trading
+            Find answers to the most common questions about Smartp2pcircle Trading
             and our P2P platform.
           </p>
         </div>
@@ -490,7 +490,7 @@ function FAQSection() {
 const footerData = {
   companyInfo: {
     description:
-      "TradeLink Trading is a peer-to-peer digital asset trading and exchange platform that connects buyers and sellers worldwide.",
+      "Smartp2pcircle Trading is a peer-to-peer digital asset trading and exchange platform that connects buyers and sellers worldwide.",
   },
   quickLinks: [
     { label: "Home", href: "#" },
@@ -514,7 +514,7 @@ const footerData = {
     buttonText: "Subscribe",
   },
   footerBottom: {
-    copyright: `© ${new Date().getFullYear()} TradeLink Trading. All rights reserved.`,
+    copyright: `© ${new Date().getFullYear()} Smartp2pcircle Trading. All rights reserved.`,
     additionalLinks: ["Support", "Security", "Careers"],
   },
 };
@@ -527,7 +527,7 @@ function Footer() {
           {/* Company Info */}
           <div className="flex flex-col gap-4">
             <div className="flex items-center">
-              <p className="font-bold text-3xl">tradelink</p>
+              <p className="font-bold text-3xl">Smartp2pcircle</p>
             </div>
             <p className="text-gray-400 mb-4 max-w-sm">
               {footerData.companyInfo.description}

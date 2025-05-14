@@ -88,7 +88,7 @@ export default function LoginPage() {
                 {/*    className="h-16 w-auto mx-auto"*/}
                 {/*/>*/}
                 <h4 className="text-center font-gothic">
-                  Donate<span className="text-primary font-gothic">P2P</span>
+                  Smart<span className="text-primary font-gothic">p2pcircle</span>
                 </h4>
               </Link>
               <h1 className="text-2xl font-bold mt-6 mb-2">Admin Login</h1>
