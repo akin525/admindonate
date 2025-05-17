@@ -68,6 +68,55 @@ const PeerStatusPage = () => {
         }
     };
 
+    const approvePayment = async (peerId: number) => {
+        if (!confirm("Are you sure you want to APPROVE this payment?")) return;
+        try {
+            setLoading(true);
+            const res = await fetch(`${baseUrl}approve-payment/${peerId}`, {
+                method: "POST",
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            const json = await res.json();
+            if (json.success) {
+                alert("Payment approved successfully!");
+                setSelectedPeer(null);
+                fetchPeers(activeStatus);
+            } else {
+                alert(json.message || "Failed to approve payment.");
+            }
+        } catch (error) {
+            console.error(error);
+            alert("An error occurred.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const rejectPayment = async (peerId: number) => {
+        if (!confirm("Are you sure you want to REJECT this payment?")) return;
+        try {
+            setLoading(true);
+            const res = await fetch(`${baseUrl}reject-payment/${peerId}`, {
+                method: "POST",
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            const json = await res.json();
+            if (json.success) {
+                alert("Payment rejected successfully!");
+                setSelectedPeer(null);
+                fetchPeers(activeStatus);
+            } else {
+                alert(json.message || "Failed to reject payment.");
+            }
+        } catch (error) {
+            console.error(error);
+            alert("An error occurred.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
     return (
         <div className="min-h-screen bg-[#0B1120] text-white flex">
             {sidebarOpen && (
@@ -172,7 +221,8 @@ const PeerStatusPage = () => {
 
                     {selectedPeer && (
                         <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center">
-                            <div className="bg-[#1f2937] p-6 rounded-lg shadow-xl w-full max-w-3xl relative overflow-y-auto max-h-[90vh]">
+                            <div
+                                className="bg-[#1f2937] p-6 rounded-lg shadow-xl w-full max-w-3xl relative overflow-y-auto max-h-[90vh]">
                                 <button
                                     className="absolute top-2 right-2 text-gray-400 hover:text-white text-xl"
                                     onClick={() => setSelectedPeer(null)}
@@ -190,12 +240,16 @@ const PeerStatusPage = () => {
                                         <p><strong>Due At:</strong> {selectedPeer.due_at}</p>
                                         <p><strong>Paid At:</strong> {selectedPeer.paid_at || "N/A"}</p>
                                         <p><strong>Confirmed At:</strong> {selectedPeer.confirmed_at || "N/A"}</p>
-                                        <p><strong>Hash Tag:</strong> <a href={selectedPeer.hash_tag} className="text-blue-400 underline" target="_blank">{selectedPeer.hash_tag}</a></p>
+                                        <p><strong>Hash Tag:</strong> <a href={selectedPeer.hash_tag}
+                                                                         className="text-blue-400 underline"
+                                                                         target="_blank">{selectedPeer.hash_tag}</a></p>
                                     </div>
 
                                     <div>
                                         <h3 className="text-lg font-semibold mt-4 mb-2">Ask Details</h3>
-                                        <p><strong>User:</strong> {selectedPeer.ask_user?.username} ({selectedPeer.ask_user?.email})</p>
+                                        <p>
+                                            <strong>User:</strong> {selectedPeer.ask_user?.username} ({selectedPeer.ask_user?.email})
+                                        </p>
                                         <p><strong>Amount:</strong> {selectedPeer.ask?.amount} USDT</p>
                                         <p><strong>Paired:</strong> {selectedPeer.ask?.paired_amount} USDT</p>
                                         <p><strong>BEP Address:</strong> {selectedPeer.ask?.bep_address}</p>
@@ -207,7 +261,9 @@ const PeerStatusPage = () => {
 
                                     <div>
                                         <h3 className="text-lg font-semibold mt-4 mb-2">Bid Details</h3>
-                                        <p><strong>User:</strong> {selectedPeer.bid_user?.username} ({selectedPeer.bid_user?.email})</p>
+                                        <p>
+                                            <strong>User:</strong> {selectedPeer.bid_user?.username} ({selectedPeer.bid_user?.email})
+                                        </p>
                                         <p><strong>Amount:</strong> {selectedPeer.bid?.amount} USDT</p>
                                         <p><strong>Paired:</strong> {selectedPeer.bid?.paired_amount} USDT</p>
                                         <p><strong>Plan ID:</strong> {selectedPeer.bid?.plan_id}</p>
@@ -215,6 +271,21 @@ const PeerStatusPage = () => {
                                         <p><strong>Trx:</strong> {selectedPeer.bid?.trx}</p>
                                     </div>
                                 </div>
+                                <div className="flex gap-4 mt-6">
+                                    <button
+                                        onClick={() => approvePayment(selectedPeer.id)}
+                                        className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
+                                    >
+                                        Approve Payment
+                                    </button>
+                                    <button
+                                        onClick={() => rejectPayment(selectedPeer.id)}
+                                        className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
+                                    >
+                                        Reject Payment
+                                    </button>
+                                </div>
+
                             </div>
                         </div>
                     )}
