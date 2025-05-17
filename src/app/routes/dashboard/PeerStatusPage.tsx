@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Sidebar from "@/components/Sidebar.tsx";
 import DashboardHeader from "@/components/DashboardHeader.tsx";
 import { getAuthToken } from "@/utils/auth.tsx";
+import { toast } from "react-toastify";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 const token = getAuthToken();
@@ -10,6 +11,7 @@ const statusTabs = [
     { label: "Awaiting Payment", value: "awaiting_payment" },
     { label: "Payment Submitted", value: "payment_submitted" },
     { label: "Payment Confirmed", value: "payment_confirmed" },
+    { label: "Payment Declined", value: "payment_declined" },
 ];
 
 const PeerStatusPage = () => {
@@ -24,6 +26,9 @@ const PeerStatusPage = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [selectedPeer, setSelectedPeer] = useState<any | null>(null);
+    const [actionLoading, setActionLoading] = useState<"approve" | "reject" | "block-bidder" | "block-asker" | null>(null);
+    const [showRejectModal, setShowRejectModal] = useState(false);
+    const [rejectReason, setRejectReason] = useState("");
 
     const fetchPeers = async (status: string, url?: string) => {
         setLoading(true);
@@ -70,52 +75,115 @@ const PeerStatusPage = () => {
 
     const approvePayment = async (peerId: number) => {
         if (!confirm("Are you sure you want to APPROVE this payment?")) return;
+        setActionLoading("approve");
         try {
-            setLoading(true);
             const res = await fetch(`${baseUrl}approve-payment/${peerId}`, {
                 method: "POST",
-                headers: { Authorization: `Bearer ${token}` },
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ status: "approved" }),
             });
             const json = await res.json();
             if (json.success) {
-                alert("Payment approved successfully!");
+                toast.success(json.message || "Payment approved successfully!");
                 setSelectedPeer(null);
                 fetchPeers(activeStatus);
             } else {
-                alert(json.message || "Failed to approve payment.");
+                toast.error(json.message || "Failed to approve payment.");
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
-            alert("An error occurred.");
+            toast.error(error?.message || "An error occurred.");
         } finally {
-            setLoading(false);
+            setActionLoading(null);
         }
     };
-
-    const rejectPayment = async (peerId: number) => {
-        if (!confirm("Are you sure you want to REJECT this payment?")) return;
+    const blockBidder = async (peerId: number) => {
+        setActionLoading("block-bidder");
         try {
-            setLoading(true);
-            const res = await fetch(`${baseUrl}reject-payment/${peerId}`, {
-                method: "POST",
-                headers: { Authorization: `Bearer ${token}` },
+            const res = await fetch(`${baseUrl}user-status-update/${peerId}/blocked`, {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
             });
             const json = await res.json();
             if (json.success) {
-                alert("Payment rejected successfully!");
+                toast.success(json.message );
                 setSelectedPeer(null);
                 fetchPeers(activeStatus);
             } else {
-                alert(json.message || "Failed to reject payment.");
+                toast.error(json.message );
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
-            alert("An error occurred.");
+            toast.error(error?.message );
         } finally {
-            setLoading(false);
+            setActionLoading(null);
+        }
+    };
+    const blockAsker = async (peerId: number) => {
+        setActionLoading("block-asker");
+        try {
+            const res = await fetch(`${baseUrl}user-status-update/${peerId}/blocked`, {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+            });
+            const json = await res.json();
+            if (json.success) {
+                toast.success(json.message );
+                setSelectedPeer(null);
+                fetchPeers(activeStatus);
+            } else {
+                toast.error(json.message );
+            }
+        } catch (error: any) {
+            console.error(error);
+            toast.error(error?.message );
+        } finally {
+            setActionLoading(null);
         }
     };
 
+    const rejectPayment = async (peerId: number, reason: string) => {
+        if (!reason.trim()) {
+            toast.error("Please provide a reason for rejection.");
+            return;
+        }
+
+        setActionLoading("reject");
+        try {
+            const res = await fetch(`${baseUrl}approve-payment/${peerId}`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ status: "declined", reason }),
+            });
+            const json = await res.json();
+            if (json.success) {
+                toast.success("Payment rejected successfully!");
+                setSelectedPeer(null);
+                setShowRejectModal(false);
+                setRejectReason("");
+                fetchPeers(activeStatus);
+            } else {
+                toast.error(json.message || "Failed to reject payment.");
+            }
+        } catch (error: any) {
+            console.error(error);
+            toast.error(error?.message || "An error occurred.");
+        } finally {
+            setActionLoading(null);
+        }
+    };
 
     return (
         <div className="min-h-screen bg-[#0B1120] text-white flex">
@@ -221,8 +289,7 @@ const PeerStatusPage = () => {
 
                     {selectedPeer && (
                         <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center">
-                            <div
-                                className="bg-[#1f2937] p-6 rounded-lg shadow-xl w-full max-w-3xl relative overflow-y-auto max-h-[90vh]">
+                            <div className="bg-[#1f2937] p-6 rounded-lg shadow-xl w-full max-w-3xl relative overflow-y-auto max-h-[90vh]">
                                 <button
                                     className="absolute top-2 right-2 text-gray-400 hover:text-white text-xl"
                                     onClick={() => setSelectedPeer(null)}
@@ -240,16 +307,12 @@ const PeerStatusPage = () => {
                                         <p><strong>Due At:</strong> {selectedPeer.due_at}</p>
                                         <p><strong>Paid At:</strong> {selectedPeer.paid_at || "N/A"}</p>
                                         <p><strong>Confirmed At:</strong> {selectedPeer.confirmed_at || "N/A"}</p>
-                                        <p><strong>Hash Tag:</strong> <a href={selectedPeer.hash_tag}
-                                                                         className="text-blue-400 underline"
-                                                                         target="_blank">{selectedPeer.hash_tag}</a></p>
+                                        <p><strong>Hash Tag:</strong> <a href={selectedPeer.hash_tag} className="text-blue-400 underline" target="_blank">{selectedPeer.hash_tag}</a></p>
                                     </div>
 
                                     <div>
                                         <h3 className="text-lg font-semibold mt-4 mb-2">Ask Details</h3>
-                                        <p>
-                                            <strong>User:</strong> {selectedPeer.ask_user?.username} ({selectedPeer.ask_user?.email})
-                                        </p>
+                                        <p><strong>User:</strong> {selectedPeer.ask_user?.username} ({selectedPeer.ask_user?.email})</p>
                                         <p><strong>Amount:</strong> {selectedPeer.ask?.amount} USDT</p>
                                         <p><strong>Paired:</strong> {selectedPeer.ask?.paired_amount} USDT</p>
                                         <p><strong>BEP Address:</strong> {selectedPeer.ask?.bep_address}</p>
@@ -261,9 +324,7 @@ const PeerStatusPage = () => {
 
                                     <div>
                                         <h3 className="text-lg font-semibold mt-4 mb-2">Bid Details</h3>
-                                        <p>
-                                            <strong>User:</strong> {selectedPeer.bid_user?.username} ({selectedPeer.bid_user?.email})
-                                        </p>
+                                        <p><strong>User:</strong> {selectedPeer.bid_user?.username} ({selectedPeer.bid_user?.email})</p>
                                         <p><strong>Amount:</strong> {selectedPeer.bid?.amount} USDT</p>
                                         <p><strong>Paired:</strong> {selectedPeer.bid?.paired_amount} USDT</p>
                                         <p><strong>Plan ID:</strong> {selectedPeer.bid?.plan_id}</p>
@@ -271,18 +332,36 @@ const PeerStatusPage = () => {
                                         <p><strong>Trx:</strong> {selectedPeer.bid?.trx}</p>
                                     </div>
                                 </div>
+
                                 <div className="flex gap-4 mt-6">
                                     <button
                                         onClick={() => approvePayment(selectedPeer.id)}
-                                        className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
+                                        disabled={actionLoading === "approve"}
+                                        className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded disabled:opacity-50"
                                     >
-                                        Approve Payment
+                                        {actionLoading === "approve" ? "Approving..." : "Approve Payment"}
                                     </button>
                                     <button
-                                        onClick={() => rejectPayment(selectedPeer.id)}
-                                        className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
+                                        onClick={() => setShowRejectModal(true)}
+                                        disabled={actionLoading === "reject"}
+                                        className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded disabled:opacity-50"
                                     >
-                                        Reject Payment
+                                        {actionLoading === "reject" ? "Rejecting..." : "Reject Payment"}
+                                    </button>
+
+                                    <button
+                                        onClick={() => blockBidder(selectedPeer.bid_user.id)}
+                                        disabled={actionLoading === "block-bidder"}
+                                        className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded disabled:opacity-50"
+                                    >
+                                        {actionLoading === "block-bidder" ? "Blocking..." : "Block Bidder"}
+                                    </button>
+                                    <button
+                                        onClick={() => blockAsker(selectedPeer.ask_user.id)}
+                                        disabled={actionLoading === "block-asker"}
+                                        className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded disabled:opacity-50"
+                                    >
+                                        {actionLoading === "block-asker" ? "Blocking..." : "Block Asker"}
                                     </button>
                                 </div>
 
@@ -291,6 +370,44 @@ const PeerStatusPage = () => {
                     )}
                 </div>
             </div>
+
+            {showRejectModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center">
+                    <div className="bg-[#1f2937] p-6 rounded-lg shadow-xl w-full max-w-md relative">
+                        <button
+                            className="absolute top-2 right-2 text-gray-400 hover:text-white text-xl"
+                            onClick={() => setShowRejectModal(false)}
+                        >
+                            ✕
+                        </button>
+                        <h2 className="text-xl font-bold mb-4">Reject Payment</h2>
+                        <label className="block text-sm mb-2">Reason for rejection:</label>
+                        <textarea
+                            value={rejectReason}
+                            onChange={(e) => setRejectReason(e.target.value)}
+                            rows={4}
+                            className="w-full p-3 bg-gray-800 text-white rounded resize-none"
+                            placeholder="Enter reason..."
+                        />
+                        <div className="flex justify-end mt-4 gap-2">
+                            <button
+                                onClick={() => setShowRejectModal(false)}
+                                className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={() => rejectPayment(selectedPeer.id, rejectReason)}
+                                disabled={actionLoading === "reject"}
+                                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded disabled:opacity-50"
+                            >
+                                {actionLoading === "reject" ? "Rejecting..." : "Submit"}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
         </div>
     );
 };
