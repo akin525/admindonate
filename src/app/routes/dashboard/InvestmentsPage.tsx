@@ -20,17 +20,20 @@ const token = getAuthToken();
 
 export default function InvestmentsPage() {
     const [investments, setInvestments] = useState<Investment[]>([]);
-    const [statusFilter, setStatusFilter] = useState("running"); // Default changed to 'running'
+    const [statusFilter, setStatusFilter] = useState("running");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const navigate = useNavigate();
+    const [currentPage, setCurrentPage] = useState(1);
+    const [lastPage, setLastPage] = useState(1);
 
-    const fetchInvestments = async (status: string) => {
+// Corrected fetchInvestments function with both parameters
+    const fetchInvestments = async (page = 1, status = "running") => {
         setLoading(true);
         try {
             const statusParam = status !== "all" ? `/${status}` : "";
-            const res = await fetch(`${baseUrl}investments${statusParam}`, {
+            const res = await fetch(`${baseUrl}investments${statusParam}?page=${page}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     "Content-Type": "application/json",
@@ -41,6 +44,8 @@ export default function InvestmentsPage() {
 
             const result = await res.json();
             setInvestments(result?.data?.data || []);
+            setLastPage(result.data?.last_page || 1);
+            setCurrentPage(result.data?.current_page || 1);
         } catch (err: any) {
             setError(err.message || "An error occurred");
         } finally {
@@ -48,8 +53,16 @@ export default function InvestmentsPage() {
         }
     };
 
+// Re-fetch when page changes
     useEffect(() => {
-        fetchInvestments(statusFilter);
+        fetchInvestments(currentPage, statusFilter);
+    }, [currentPage]);
+
+// Re-fetch when filter changes
+    useEffect(() => {
+        // Reset to page 1 when status filter changes
+        setCurrentPage(1);
+        fetchInvestments(1, statusFilter);
     }, [statusFilter]);
 
     const getStatusColor = (status: string) => {
@@ -62,6 +75,26 @@ export default function InvestmentsPage() {
                 return "text-red-500";
         }
     };
+
+    const Pagination = () => (
+        <div className="flex justify-center mt-6 space-x-4">
+            <button
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="px-4 py-2 bg-gray-700 rounded hover:bg-gray-600 disabled:opacity-50"
+            >
+                Prev
+            </button>
+            <span className="text-gray-300 self-center">Page {currentPage} of {lastPage}</span>
+            <button
+                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, lastPage))}
+                disabled={currentPage === lastPage}
+                className="px-4 py-2 bg-gray-700 rounded hover:bg-gray-600 disabled:opacity-50"
+            >
+                Next
+            </button>
+        </div>
+    );
 
     return (
         <div className="min-h-screen flex bg-gradient-to-br from-[#0A0F1E] to-[#1E293B] text-white">
@@ -154,6 +187,8 @@ export default function InvestmentsPage() {
                             ))}
                         </div>
                     )}
+                    <Pagination />
+
                 </main>
             </div>
         </div>
