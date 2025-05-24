@@ -26,7 +26,7 @@ const PeerStatusPage = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [selectedPeer, setSelectedPeer] = useState<any | null>(null);
-    const [actionLoading, setActionLoading] = useState<"approve" | "reject" | "block-bidder" | "block-asker" | null>(null);
+    const [actionLoading, setActionLoading] = useState<"approve" | "unpeer" | "reject" | "block-bidder" | "block-asker" | null>(null);
     const [showRejectModal, setShowRejectModal] = useState(false);
     const [rejectReason, setRejectReason] = useState("");
 
@@ -96,6 +96,32 @@ const PeerStatusPage = () => {
         } catch (error: any) {
             console.error(error);
             toast.error(error?.message || "An error occurred.");
+        } finally {
+            setActionLoading(null);
+        }
+    };
+    const unpeer = async (id: number) => {
+        if (!confirm("Are you sure you want to Unpair?")) return;
+        setActionLoading("unpeer");
+        try {
+            const res = await fetch(`${baseUrl}unpair-peering/${id}`, {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                }
+            });
+            const json = await res.json();
+            if (json.success) {
+                toast.success(json.message);
+                setSelectedPeer(null);
+                fetchPeers(activeStatus);
+            } else {
+                toast.error(json.message);
+            }
+        } catch (error: any) {
+            console.error(error);
+            toast.error(error?.message );
         } finally {
             setActionLoading(null);
         }
@@ -362,6 +388,13 @@ const PeerStatusPage = () => {
                                         className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded disabled:opacity-50"
                                     >
                                         {actionLoading === "block-asker" ? "Blocking..." : "Block Asker"}
+                                    </button>
+                                    <button
+                                        onClick={() => unpeer(selectedPeer.id)}
+                                        disabled={actionLoading === "unpeerr"}
+                                        className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded disabled:opacity-50"
+                                    >
+                                        {actionLoading === "unpeer" ? "Unpairing..." : "Unpair"}
                                     </button>
                                 </div>
 
