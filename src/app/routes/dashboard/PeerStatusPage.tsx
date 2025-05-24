@@ -391,7 +391,7 @@ const PeerStatusPage = () => {
                                     </button>
                                     <button
                                         onClick={() => unpeer(selectedPeer.id)}
-                                        disabled={actionLoading === "unpeerr"}
+                                        disabled={actionLoading === "unpeer"}
                                         className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded disabled:opacity-50"
                                     >
                                         {actionLoading === "unpeer" ? "Unpairing..." : "Unpair"}
