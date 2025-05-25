@@ -1,4 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import $ from "jquery";
+import "summernote/dist/summernote-lite.css";
+import "summernote/dist/summernote-lite.js";
+
 import Sidebar from "@/components/Sidebar.tsx";
 import DashboardHeader from "@/components/DashboardHeader.tsx";
 import { getAuthToken } from "@/utils/auth.tsx";
@@ -30,6 +34,9 @@ export default function BotCastPage() {
     const [selectedUser, setSelectedUser] = useState<number | string | null>(null);
     const [loadingUsers, setLoadingUsers] = useState(false);
 
+    // Ref for summernote div
+    const summernoteRef = useRef<HTMLDivElement>(null);
+
     const fetchUsers = async () => {
         setLoadingUsers(true);
         try {
@@ -56,6 +63,38 @@ export default function BotCastPage() {
         if (userModalOpen) fetchUsers();
     }, [page, userModalOpen]);
 
+    // Initialize Summernote and sync content
+    useEffect(() => {
+        if (!summernoteRef.current) return;
+
+        // Initialize Summernote
+        ($(summernoteRef.current) as any).summernote({
+            placeholder: "Enter your message here...",
+            tabsize: 2,
+            height: 150,
+            toolbar: [
+                ["style", ["bold", "italic", "underline", "clear"]],
+                ["font", ["strikethrough"]],
+                ["para", ["ul", "ol", "paragraph"]],
+                ["insert", ["link", "picture", "video"]],
+                ["view", ["codeview"]],
+            ],
+            callbacks: {
+                onChange: (contents: string) => {
+                    setMessage(contents);
+                },
+            },
+        });
+
+        // Set initial content
+        ($(summernoteRef.current) as any).summernote("code", message || "");
+
+        // Cleanup on unmount
+        return () => {
+            ($(summernoteRef.current) as any).summernote("destroy");
+        };
+    }, []);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
@@ -81,6 +120,8 @@ export default function BotCastPage() {
                 setTo("all");
                 setSelectedUser(null);
                 toast.success(data?.message || "Message sent successfully!");
+                // Clear summernote content
+                ($(summernoteRef.current) as any).summernote("reset");
             } else {
                 throw new Error(data?.message || "Failed to send");
             }
@@ -98,7 +139,10 @@ export default function BotCastPage() {
     return (
         <div className="min-h-screen flex bg-[#0B1120] text-white relative">
             {sidebarOpen && (
-                <div className="fixed inset-0 z-20 bg-black bg-opacity-60 lg:hidden" onClick={() => setSidebarOpen(false)} />
+                <div
+                    className="fixed inset-0 z-20 bg-black bg-opacity-60 lg:hidden"
+                    onClick={() => setSidebarOpen(false)}
+                />
             )}
             <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
             <div className="flex flex-col flex-1">
@@ -106,7 +150,9 @@ export default function BotCastPage() {
 
                 <main className="px-4 sm:px-6 lg:px-8 py-10 flex justify-center">
                     <div className="w-full max-w-2xl bg-[#111827] p-8 rounded-2xl shadow-lg border border-gray-800">
-                        <h1 className="text-3xl font-bold text-green-500 mb-6 text-center">📢 Bot Cast</h1>
+                        <h1 className="text-3xl font-bold text-green-500 mb-6 text-center">
+                            📢 Bot Cast
+                        </h1>
 
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div>
@@ -128,19 +174,18 @@ export default function BotCastPage() {
                                 </select>
                                 {selectedUser && (
                                     <p className="text-sm text-gray-400 mt-2">
-                                        Selected User ID: <span className="text-green-400">{selectedUser}</span>
+                                        Selected User ID:{" "}
+                                        <span className="text-green-400">{selectedUser}</span>
                                     </p>
                                 )}
                             </div>
 
                             <div>
                                 <label className="block text-sm font-medium mb-1">Message</label>
-                                <textarea
-                                    value={message}
-                                    onChange={(e) => setMessage(e.target.value)}
-                                    rows={6}
-                                    className="w-full bg-gray-800 border border-gray-700 rounded-md px-4 py-2 text-white placeholder-gray-400"
-                                    placeholder="Enter your message here. Use \n for new lines."
+                                {/* Summernote editor container */}
+                                <div
+                                    ref={summernoteRef}
+                                    className="bg-gray-800 rounded-md border border-gray-700 text-white"
                                 />
                             </div>
 
@@ -148,7 +193,9 @@ export default function BotCastPage() {
                                 type="submit"
                                 disabled={loading}
                                 className={`w-full py-2 px-4 rounded-md text-white font-semibold transition duration-300 ${
-                                    loading ? "bg-green-700 opacity-70 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"
+                                    loading
+                                        ? "bg-green-700 opacity-70 cursor-not-allowed"
+                                        : "bg-green-600 hover:bg-green-700"
                                 }`}
                             >
                                 {loading ? "Sending..." : "Send Message"}
