@@ -140,7 +140,7 @@ export default function BotCastPage() {
                                     onChange={(e) => setMessage(e.target.value)}
                                     rows={6}
                                     className="w-full bg-gray-800 border border-gray-700 rounded-md px-4 py-2 text-white placeholder-gray-400"
-                                    placeholder="Enter your message here. Use \\n for new lines."
+                                    placeholder="Enter your message here. Use \n for new lines."
                                 />
                             </div>
 
