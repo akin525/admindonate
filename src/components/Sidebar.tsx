@@ -8,7 +8,7 @@ import {
     User,
     Settings,
     MessageSquare,
-    LogOut, Database,
+    LogOut, Database, BotMessageSquare,
 } from "lucide-react";
 
 export default function Sidebar({
@@ -101,6 +101,13 @@ export default function Sidebar({
                         >
                             <User className="mr-3 h-5 w-5 text-gray-400" />
                             All-Users
+                        </Link>
+                        <Link
+                            to="/botcast"
+                            className="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-300 hover:bg-[#070D20] hover:text-white"
+                        >
+                            <BotMessageSquare className="mr-3 h-5 w-5 text-gray-400" />
+                            BotCast
                         </Link>
 
                     </div>

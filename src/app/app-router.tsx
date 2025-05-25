@@ -26,6 +26,7 @@ import InvestmentsPage from "@/app/routes/dashboard/InvestmentsPage.tsx";
 import InvestmentDetails from "@/app/routes/dashboard/InvestmentDetails.tsx";
 import AllUsersPage from "@/app/routes/dashboard/AllUsersPage.tsx";
 import UserDetailsPage from "@/app/routes/dashboard/UserDetailsPage.tsx";
+import BotCastPage from "@/app/routes/dashboard/BotCastPage.tsx";
 
 export const router = createBrowserRouter([
   {
@@ -72,6 +73,15 @@ export const router = createBrowserRouter([
         Component: () => (
             <ProtectedRoute>
                 <PeerStatusPage />
+            </ProtectedRoute>
+        ),
+
+    },
+    {
+        path: "/botcast",
+        Component: () => (
+            <ProtectedRoute>
+                <BotCastPage />
             </ProtectedRoute>
         ),
 
