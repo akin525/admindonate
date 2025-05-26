@@ -4,6 +4,7 @@ import { getAuthToken } from "@/utils/auth";
 import Sidebar from "@/components/Sidebar";
 import DashboardHeader from "@/components/DashboardHeader";
 import { BadgeCheck, UserCircle } from "lucide-react";
+import {toast} from "react-toastify";
 
 interface UserProfile {
     id: number;
@@ -81,21 +82,21 @@ export default function UserDetailsPage() {
         setFeedback(null);
         try {
             const token = getAuthToken();
-            const res = await fetch(`${baseUrl}bot/broadcast`, {
+            const res = await fetch(`${baseUrl}bot-cast`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({
-                    telegram_id: profile.telegram_id,
+                    to: String(profile.id),
                     message: botcastMessage,
                 }),
             });
 
             const data = await res.json();
             if (!res.ok) throw new Error(data.message || "Failed to send message");
-
+            toast.success("Message sent successfully!");
             setFeedback({ type: "success", message: "Message sent successfully!" });
             setBotcastMessage("");
         } catch (err: any) {
